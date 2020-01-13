@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>学生展示</title>
+
+
+    <link type="text/css" href="/css/style.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/commons/bootstrap/css/bootstrap.min.css">
+    <link href="/commons/datatable/DataTables-1.10.18/css/dataTables.bootstrap.min.css" rel="stylesheet"/>
+
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script src="/commons/bootstrap/js/bootstrap.min.js"></script>
+
+    <script src="/js/fileinput/js/fileinput.min.js"></script>
+    <link href="/js/fileinput/css/fileinput.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/js/fileinput/themes/explorer/theme.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/js/fileinput/css/fileinput-rtl.css"/>
+    <script src="/js/fileinput/themes/explorer/theme.js"></script>
+    <script src="/js/fileinput/js/locales/zh.js"></script>
+
+
+
+    <script type="text/javascript" src="/commons/datatable/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="/commons/datatable/DataTables-1.10.18/js/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="/commons/dateFormat.js"></script>
+    <link rel="stylesheet" type="text/css" href="/shop/js/shop/css/webbase.css" />
+    <link rel="stylesheet" type="text/css" href="/shop/js/shop/css/pages-getOrderInfo.css" />
+
+    <script type="text/javascript" src="/shop/js/shop/js/plugins/jquery.easing/jquery.easing.min.js"></script>
+    <script type="text/javascript" src="/shop/js/shop/js/plugins/sui/sui.min.js"></script>
+    <script type="text/javascript" src="/shop/js/shop/js/widget/nav-portal-top.js"></script>
+    <script type="text/javascript" src="/shop/js/shop/js/pages/getOrderInfo.js"></script>
+</head>
+
+<body>
+<div  style="margin-left:20px" class="left">
+
+
+    <div class="row" id="categoryShow"></div>
+    <div class="row" id="brandShow"></div>
+
+    <!--<div>-->
+        <!--<span><b>学生名字</b><input type="email" id="stuName1" name="stuName" style="width: 170px;height: 30px;" placeholder="学生名字" class="form-control" /></span>-->
+        <!--<span>-->
+            <!--<b>学生销量</b><input type="email" name="minDrugSales" style="width: 170px;height: 30px;" placeholder="学生销量最小值" class="form-control" />-->
+            <!--《==》<input type="email" name="maxDrugSales" style="width: 170px;height: 30px;" placeholder="学生销量最大值" class="form-control" />-->
+        <!--</span>-->
+        <!--<span>-->
+            <!--<b>学生库存</b><input type="email" name="minDrugStock" style="width: 170px;height: 30px;" placeholder="学生库存最小值" class="form-control" />-->
+            <!--《==》<input type="email" name="maxDrugStock" style="width: 170px;height: 30px;" placeholder="学生库存最大值" class="form-control" />-->
+         <!--</span>-->
+        <!--<button type="button" class="btn btn-default" onclick="search()">查询</button>-->
+    <!--</div>-->
+
+    <div class="row">
+        <button class="btn btn-primary" type="button" onclick="derive()">导出</button>
+        <table id="productTable" class="table table-bordered table-striped" width="1300"></table>
+    </div>
+    <div id="r">
+
+    </div>
+    <div class="container" style="display: none">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <form role="form" id="form">
+                    <div class="form-group" >
+                        <input id="id" hidden="hidden"/><input type="email" disabled="true" id="info" style="width: 200px;"  class="form-control" value=""/></b><b>学生名字</b></label><input type="email" style="width: 200px;" id="stuName"  name="stuName" placeholder="学生名字" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        </label><b>年龄</b><input type="email" name="age" style="width: 200px;" placeholder="年龄"  class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        </label><b>照片</b>
+                        <img src="" id="myImg" width="150">
+                        <input type="file" name="img" id="pic">
+                        <input type="hidden" name="url" id="path">
+                    </div>
+                    <div class="form-group">
+                        </label><b>生日</b><input type="email" name="birthday" style="width: 200px;" placeholder="生日"  class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        </label><b>地址</b><input type="email" name="address" style="width: 200px;" placeholder="地址"  class="form-control" />
+                    </div>
+                    <div class="checkbox">
+                    </div> <button type="button" class="btn btn-default" onclick="enit()">保存</button><button type="button" class="btn btn-default" onclick="qx()">取消</button>
+                </form>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript">
+
+    function qx(){
+        location.reload();
+    }
+    $(function () {
+        initstu();
+        $("#pic").fileinput({
+            language:"zh",
+            uploadUrl:"http://localhost:8043/stu/fileInput",  //用于跳转后台写的上传文件的方法
+            showCaption:false,  //是否显示上传的文件名的文本框
+            dropZoneEnabled:false,  //是否显示拖拽文件的文本域
+            initialPreviewAsData: true,
+            forceIframeTransport: true
+        }).on("fileuploaded",function (event, result, previewId, index) {
+            var url = result.response.path;
+            $("#path").val(url);
+        })
+    })
+    /*增加*/
+    var areaHtml="";
+    var brandHtml="";
+    var areaArr=[];
+    var brandArr=[];
+    function toaddDrug(id){
+        if(id>100000){
+
+            $(".container").css("display","");
+            $("#id").val(null);
+            $("#info").val("添加学生信息");
+            $("#id").val(null);//id
+            $("#stuName").val(null);//学生名字
+            $("input[name='age']").val(null);//年龄
+            $("input[name='address']").val(null);//地址
+            $("input[name='birthday']").val(null);//生日
+        }else {
+             $("#areaDiv").html(areaHtml="");
+             $("#brandDiv").html(brandHtml="");
+            $(".container").css("display","");
+            $("#info").val("修改学生信息");
+
+            $.ajax({
+                url:"http://localhost:8043/stu/getByIdStuBean",
+                type:"post",
+                dataType:"json",
+                data:{
+                    "id":id
+                },
+                success:function (result) {
+                    if (result.code==200){
+                        var stu=result.data;
+                        $("#id").val(stu.id);//id
+                        $("#stuName").val(stu.stuName);//学生名字
+                        $("input[name='age']").val(stu.age);//年龄
+                        $("input[name='address']").val(stu.address);//地址
+                        $("#path").val(stu.img);//地址
+                        $("#myImg").attr("src","http://localhost:8043"+stu.img);//地址
+                        $("input[name='birthday']").val(new Date(stu.birthday).Format("yyyy-MM-dd hh:mm:ss"));//生日
+                    }
+                }
+            });
+        }
+    }
+    var table;
+    function initstu() {
+        table=$("#productTable").DataTable({
+            "autoWidth":true, //自适应宽度
+            "info":true,//展示表格左下角信息,分页栏
+            "lengthChange":true,//是否改变每页展示的条数a
+            "searching":false,
+            "lengthMenu": [ 4, 5, 10 ],
+            "ordering": false,//是否允许排序
+            "paging": true,//是否允许开启本地分页
+            "processing": true,//是否先处理状态
+            "serverSide": false,//true是服务器模式，false是客户端模式
+            //如何和后台进行交互并展示
+            "ajax":{
+                url:"http://localhost:8043/stu/queryStuList",
+                type:"post",
+
+                "dataSrc":function (result) {
+                    return result.data.data;
+                }
+            },
+            //数据如何展示到表格中
+            "columns":[
+                {"data":"id","title":"学生编号"},
+                {"data":"stuName","title":"学生名称"},
+                {"data":"isDel","title":"是否删除",render:function (data, type, row, meta) {
+                        if(data==1){
+                            return '未删除';
+                        }else{
+                            return "已删除";
+                        }
+                    }},
+                {"data":"img","title":"学生照片",render:function (data, type, row, meta) {
+                        if(data!=null){
+                            return '<img src="http://localhost:8043'+data+'" width="80px" title="'+row.subtitle+'"/>';
+                        }else{
+                            return "";
+                        }
+                    }},
+
+                {"data":"age","title":"学生年龄"},
+                {"data":"address","title":"学生地址"},
+                {"data":"birthday","title":"学生生日",render:function(data, type, row, meta) {
+                        if(data==null){
+                            return "";
+                        }
+                        return  new Date(data).Format("yyyy-MM-dd hh:mm:ss")
+                    } },
+
+                {"data":"id","title":"操作","width":"170",render:function (data,type,row,meta) {
+                        return'<button class="btn btn-primary" type="button" onclick="deleteDrug('+data+')">删除</button><button class="btn btn-primary" type="button" onclick="toaddDrug('+data+')">修改</button><button class="btn btn-primary" type="button" onclick="toaddDrug('+(data*1000000)+')">添加</button>'
+                    }},
+            ],
+            "language":{
+                "url":"/commons/datatable/Chinese.json"
+            }
+
+        });
+    }
+
+    function jsonDateFormat(jsonDate) {
+        //json日期格式转换为正常格式
+        var jsonDateStr = jsonDate.toString();//此处用到toString（）是为了让传入的值为字符串类型，目的是为了避免传入的数据类型不支持.replace（）方法
+        try {
+            var k = parseInt(jsonDateStr.replace("/Date(", "").replace(")/", ""), 10);
+            if (k < 0)
+                return null;
+
+            var date = new Date(parseInt(jsonDateStr.replace("/Date(", "").replace(")/", ""), 10));
+            var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+            var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+            var milliseconds = date.getMilliseconds();
+            return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+        }
+        catch (ex) {
+            return "时间格式转换错误";
+        }
+    }
+
+    //添加或者修改
+    function enit() {
+        var id = $("#id").val();//id
+        var stuName=$("#stuName").val();//学生名字
+        var age=$("input[name='age']").val();//年龄
+        var birthday=$("input[name='birthday']").val();//生日
+        var address=$("input[name='address']").val();//地址
+        var path = $("#path").val()
+        if(id!=""){
+            //修改
+            $.ajax({
+                url:"http://localhost:8043/stu/updateStu",
+                type:"post",
+                dataType:"json",
+                data:{
+                    "id":id,
+                    "stuName":stuName,
+                    "age":age,
+                    "birthday":birthday,
+                    "img":path,
+                    "address":address
+                },
+                success:function (result) {
+                    if (result.code==200){
+                        alert("成功");
+                        location.reload()
+                    }
+                }
+            });
+        }else {
+            //添加
+            $.ajax({
+                 url:"http://localhost:8043/stu/addStu",
+                type:"post",
+                dataType:"json",
+                data:{
+                    "stuName":stuName,
+                    "age":age,
+                    "birthday":birthday,
+                    "img":path,
+                    "address":address
+                },
+                success:function (result) {
+                    if (result.code==200){
+                        alert("成功");
+                        location.reload()
+                    }
+                }
+            });
+        }
+    }
+    function deleteDrug(id) {
+        if(confirm("你确定要删除？")){
+            $.ajax({
+                url:"http://localhost:8043/stu/deleteStu",
+                type:"post",
+                dataType:"json",
+                data:{
+                    "id":id
+                },
+                success:function (result) {
+                    if (result.code==200){
+                        alert("成功");
+                        location.reload()
+                    }
+                }
+            });
+        }
+    }
+    function search(){
+        var stuName=$("input[name='stuName']").val();
+        var minDrugSales=$("input[name='minDrugSales']").val();
+        var maxDrugSales=$("input[name='maxDrugSales']").val();
+
+        var minDrugStock=$("input[name='minDrugStock']").val();
+        var maxDrugStock=$("input[name='maxDrugStock']").val();
+        var param={
+            "stuName":stuName,//（参数名，参数值）在参数处理中，参数名和Controller中一样就可以了，做对象处理参数，参数名必须为实体类的属性名
+            "minDrugSales":minDrugSales,
+            "maxDrugSales":maxDrugSales,
+            "minDrugStock":minDrugStock,
+            "maxDrugStock":maxDrugStock,
+        };
+        table.settings()[0].ajax.data=param;
+        table.ajax.reload();
+    }
+    // /*条件查询*/
+    // function serachs(){
+    //     var jsonData=[];
+    //     var stuName=$("input[name='stuName']").val();
+    //     var stuPrice=$("#stuPrice").val();
+    //     var stuSales=$("#stuSales").val();
+    //
+    //     var areaId=$("#areaIds").val();
+    //     var brandId=$("#brandIds").val();
+    //     var stuStock=$("#stuStock").val();
+    //     var isOTC=$("[name='isOTC']:checked").val();
+    //     var startExpiredDate=$("#startExpiredDate").val();
+    //     var endExpiredDate=$("#endExpiredDate").val();
+    //     var startProducedDate=$("#startProducedDate").val();
+    //     var endProducedDate=$("#endProducedDate").val();
+    //
+    //     jsonData.stuName=stuName;
+    //     jsonData.stuPrice=stuPrice;
+    //     jsonData.stuSales=stuSales;
+    //
+    //     jsonData.areaId=areaId;
+    //     jsonData.brandId=brandId;
+    //     jsonData.stuStock=stuStock;
+    //     jsonData.isOTC=isOTC;
+    //     jsonData.startExpiredDate=startExpiredDate;
+    //     jsonData.endExpiredDate=endExpiredDate;
+    //     jsonData.startProducedDate=startProducedDate;
+    //     jsonData.endProducedDate=endProducedDate;
+    //
+    //     table.settings()[0].ajax.data = jsonData;
+    //     table.ajax.reload();
+    // }
+</script>
+
+</body>
+</html>
