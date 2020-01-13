@@ -1,5 +1,6 @@
 package com.fh.bean;
 
+import com.fh.annotation.ExportExcel;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -12,14 +13,22 @@ import java.util.Date;
  * @date 2020/1/1310:36
  */
 public class StudentBean {
+    @ExportExcel
     private Integer id;
+    @ExportExcel
     private String stuName;
+    @ExportExcel
     private Integer age;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @ExportExcel
     private Date birthday;
+    @ExportExcel
     private String img;
+    @ExportExcel
     private Integer isDel;
+    @ExportExcel
     private Integer ip;
+    @ExportExcel
     private String address;
 
     public Integer getId() {

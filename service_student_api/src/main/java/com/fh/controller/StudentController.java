@@ -5,14 +5,13 @@ import com.fh.service.StudentService;
 import com.fh.utils.imgUtil.CopyFile;
 import com.fh.utils.page.PageBean;
 import com.fh.utils.response.ResponseServer;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.log4j.Logger;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +26,8 @@ import java.util.Map;
 @RequestMapping("stu")
 @CrossOrigin
 public class StudentController {
+
+    private static Logger log = Logger.getLogger(StudentController.class);
     @Resource
     private StudentService studentService;
 
@@ -49,6 +50,7 @@ public class StudentController {
     @RequestMapping("addStu")
     public ResponseServer addStu(StudentBean studentBean){
         ResponseServer responseServer = studentService.addStu(studentBean);
+        log.info("添加学生信息成功");
         return responseServer;
     }
     /**
@@ -89,5 +91,14 @@ public class StudentController {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("path", path);//图片路径
         return map;
+    }
+
+    /**
+     * 导出
+     * @param response
+     */
+    @GetMapping("xiaStuList")
+    public void  xiaStuList(HttpServletResponse response) {
+        studentService.xiaStuList(response);
     }
 }

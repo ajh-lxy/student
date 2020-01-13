@@ -4,6 +4,8 @@ import com.fh.bean.StudentBean;
 import com.fh.utils.page.PageBean;
 import com.fh.utils.response.ResponseServer;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @author Lenovo
  * @title: StudentService
@@ -47,4 +49,10 @@ public interface StudentService {
      * @return
      */
     ResponseServer deleteStu(Integer id);
+
+    /**
+     * 导出
+     * @param response
+     */
+    void xiaStuList(HttpServletResponse response);
 }
