@@ -87,7 +87,7 @@ public class StudentController {
     public Map<String, Object> fileinput(@RequestParam("img") MultipartFile photo) {
         String path = CopyFile.copyFile(photo, "upload");
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("path", path);
+        map.put("path", path);//图片路径
         return map;
     }
 }
