@@ -1,14 +1,17 @@
 package com.fh.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fh.bean.AreaBean;
 import com.fh.mapper.AreaMapper;
 import com.fh.service.AreaService;
 import com.fh.util.poi.PoiUtils;
+import com.fh.util.redis.RedisPools;
 import com.fh.util.response.ResponseServer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -35,8 +38,17 @@ public class AreaServiceImpl implements AreaService {
      */
     @Override
     public List<Map<String, Object>> queryArea() {
-        List<AreaBean> rightList = areaMapper.queryArea();
-        return getQueryList(0,rightList);
+        Jedis jeDis = RedisPools.getJeDis();
+        String listStu = jeDis.get("rightList");
+        if(listStu==null){
+            List<AreaBean> rightList = areaMapper.queryArea();
+            String s = JSONObject.toJSONString(rightList);
+            jeDis.set("rightList", s);
+            return getQueryList(0,rightList);
+        }else {
+            List<AreaBean> areaBeanList = JSONArray.parseArray(listStu, AreaBean.class);
+            return getQueryList(0, areaBeanList);
+        }
     }
 
     /**
@@ -46,7 +58,9 @@ public class AreaServiceImpl implements AreaService {
      */
     @Override
     public ResponseServer addArea(AreaBean areaBean) {
+        Jedis jeDis = RedisPools.getJeDis();
         areaMapper.addArea(areaBean);
+        jeDis.del("rightList");
         return ResponseServer.success();
     }
 
@@ -57,7 +71,9 @@ public class AreaServiceImpl implements AreaService {
      */
     @Override
     public ResponseServer deleteArea(String ids) {
+        Jedis jeDis = RedisPools.getJeDis();
         areaMapper.deleteArea(ids);
+        jeDis.del("rightList");
         return ResponseServer.success();
     }
 
@@ -68,7 +84,9 @@ public class AreaServiceImpl implements AreaService {
      */
     @Override
     public ResponseServer updateArea(AreaBean areaBean) {
+        Jedis jeDis = RedisPools.getJeDis();
         areaMapper.updateArea(areaBean);
+        jeDis.del("rightList");
         return ResponseServer.success();
     }
 
