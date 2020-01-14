@@ -83,6 +83,9 @@
                     <div class="form-group">
                         </label><b>地址</b><input type="email" name="address" style="width: 200px;" placeholder="地址"  class="form-control" />
                     </div>
+                    <div class="form-group">
+                        </label><b>学费</b><input type="email" name="price" style="width: 200px;" placeholder="学费"  class="form-control" />
+                    </div>
                     <div class="checkbox">
                     </div> <button type="button" class="btn btn-default" onclick="enit()">保存</button><button type="button" class="btn btn-default" onclick="qx()">取消</button>
                 </form>
@@ -129,6 +132,7 @@
             $("input[name='age']").val(null);//年龄
             $("input[name='address']").val(null);//地址
             $("input[name='birthday']").val(null);//生日
+            $("input[name='price']").val(null);//学费
         }else {
              $("#areaDiv").html(areaHtml="");
              $("#brandDiv").html(brandHtml="");
@@ -149,6 +153,7 @@
                         $("#stuName").val(stu.stuName);//学生名字
                         $("input[name='age']").val(stu.age);//年龄
                         $("input[name='address']").val(stu.address);//地址
+                        $("input[name='price']").val(stu.price);//学费
                         $("#path").val(stu.img);//地址
                         $("#myImg").attr("src","http://localhost:8043"+stu.img);//地址
                         $("input[name='birthday']").val(new Date(stu.birthday).Format("yyyy-MM-dd hh:mm:ss"));//生日
@@ -199,6 +204,7 @@
 
                 {"data":"age","title":"学生年龄"},
                 {"data":"address","title":"学生地址"},
+                {"data":"price","title":"学生学费"},
                 {"data":"birthday","title":"学生生日",render:function(data, type, row, meta) {
                         if(data==null){
                             return "";
@@ -246,6 +252,7 @@
         var age=$("input[name='age']").val();//年龄
         var birthday=$("input[name='birthday']").val();//生日
         var address=$("input[name='address']").val();//地址
+        var price=$("input[name='price']").val();//地址
         var path = $("#path").val()
         if(id!=""){
             //修改
@@ -259,6 +266,7 @@
                     "age":age,
                     "birthday":birthday,
                     "img":path,
+                    "price":price,
                     "address":address
                 },
                 success:function (result) {
@@ -279,6 +287,7 @@
                     "age":age,
                     "birthday":birthday,
                     "img":path,
+                    "price":price,
                     "address":address
                 },
                 success:function (result) {
