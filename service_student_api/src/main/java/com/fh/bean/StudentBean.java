@@ -1,8 +1,10 @@
 package com.fh.bean;
 
 import com.fh.annotation.ExportExcel;
+import com.fh.annotation.ExportTitle;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -12,24 +14,37 @@ import java.util.Date;
  * @description: TODO
  * @date 2020/1/1310:36
  */
+@ExportTitle(title = "学生表")
 public class StudentBean {
-    @ExportExcel
+    @ExportExcel(name = "学生编号")
     private Integer id;
-    @ExportExcel
+    @ExportExcel(name = "学生姓名")
     private String stuName;
-    @ExportExcel
+    @ExportExcel(name = "学生年龄")
     private Integer age;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @ExportExcel
+    @ExportExcel(name = "学生姓名")
     private Date birthday;
-    @ExportExcel
+    @ExportExcel(name = "学生照片")
     private String img;
-    @ExportExcel
+    @ExportExcel(name = "是否删除")
     private Integer isDel;
-    @ExportExcel
+    @ExportExcel(name = "学生ip")
     private Integer ip;
-    @ExportExcel
+    @ExportExcel(name = "学生地址")
     private String address;
+
+    @ExportExcel(name = "学生学费")
+    private BigDecimal price;
+
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
     public Integer getId() {
         return id;
