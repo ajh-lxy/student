@@ -21,12 +21,18 @@
 
 <body>
 <input type="button" class="btn btn-default" value="学生展示" onclick="queryDrugButton()"/>
+<input type="button" class="btn btn-default" value="地区展示" onclick="queryDrugButton1()"/>
 </body>
 <script type="text/javascript">
 
     function queryDrugButton() {
 
         location.href="view/student.html";
+
+    }
+    function queryDrugButton1() {
+
+        location.href="view/area.html";
 
     }
 </script>

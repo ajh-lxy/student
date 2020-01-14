@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>地区展示</title>
+
+    <link type="text/css" href="/css/style.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/commons/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/shop/ztree/bootstrapStyle.css">
+    <link href="/commons/datatable/DataTables-1.10.18/css/dataTables.bootstrap.min.css" rel="stylesheet"/>
+
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script src="/commons/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/commons/datatable/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="/commons/datatable/DataTables-1.10.18/js/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="/shop/js/shop/js/plugins/jquery.easing/jquery.easing.min.js"></script>
+    <script type="text/javascript" src="/shop/js/shop/js/plugins/sui/sui.min.js"></script>
+    <script type="text/javascript" src="/shop/js/shop/js/widget/nav-portal-top.js"></script>
+    <script type="text/javascript" src="/shop/js/shop/js/pages/getOrderInfo.js"></script>
+    <script type="text/javascript" src="/shop/ztree/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="/shop/js/bootbox/bootbox.all.min.js"></script>
+</head>
+
+<body>
+<div  style="margin-left:20px" class="left">
+
+    <div class="panel-heading">
+
+    </div>
+
+    <button type="button" class="btn btn-default" onclick="addA()">添加信息</button>
+    <button type="button" class="btn btn-default" onclick="delRightTree()">删除信息</button>
+    <button type="button" class="btn btn-default" onclick="update()">修改信息</button>
+    <!--<%&#45;&#45;展示的树状菜单&#45;&#45;%>-->
+    <div class="panel-body">
+        <div class="ztree" id="rightTree">
+        </div>
+    </div>
+    <div id="addA">
+
+    </div>
+<script type="text/javascript">
+        // <%--加载函数--%>
+        $(function () {
+            initRightTree();
+        });
+
+        var rightSetting= {
+            view: {
+                selectedMulti: false,
+            }
+
+        }
+        //查询地区ztree
+        function initRightTree() {
+            $.ajax({
+                type:"post",
+                url:"http://localhost:8044/areas/queryArea",
+                dataType: "json",
+                success: function (result) {
+                    $.fn.zTree.init($("#rightTree"), rightSetting, result);
+                },
+                error:function (result) {
+                    alert(err.message)
+                }
+            })
+        }
+
+        function addA() {
+            //获取被选中的PID
+            var ztreepid = $.fn.zTree.getZTreeObj("rightTree");
+            //获取选中的节点
+            var nodeArr=ztreepid.getSelectedNodes();
+            if(nodeArr.length==0){
+                if(confirm("要添加省级吗？")){
+                    $("#addA").html("<input type='text' disabled='true' class='form-control' value='省级' ><input type='text' class='form-control' placeholder='请添加省级地区' id='name'><input type='button' class='btn btn-default' value='保存' onclick='addRightTree()'>");
+                }
+            }else {
+                $("#addA").html("<input type='text' disabled='true' class='form-control' value='"+nodeArr[0].name+"' ><input type='text' class='form-control' placeholder='请在"+nodeArr[0].name+"下添加所属地区' id='name'><input type='button' class='btn btn-default' value='保存' onclick='addRightTree()'>");
+            }
+        }
+        //新增节点
+        function addRightTree() {
+            //获取被选中的PID
+            var ztreepid = $.fn.zTree.getZTreeObj("rightTree");
+            //获取选中的节点
+            var nodeArr=ztreepid.getSelectedNodes();
+
+            if(nodeArr.length  == 0){
+                // 判断新增必选节点
+                nodeArrId=0;
+            }else {
+                var nodeArrId=nodeArr[0].id
+            }
+
+            var name = $("#name").val();
+            $.ajax({
+                type:"post",
+                dataType:"html",
+                async:false,
+                data:{"pid":nodeArrId,
+                    "aName":name
+                },
+                url:"http://localhost:8044/areas/addArea",
+                success:function (result) {
+                    parent.location.reload();
+                }
+            })
+        }
+
+        //删除
+        function delRightTree() {
+            //获取被选中的PID
+            var ztreepid = $.fn.zTree.getZTreeObj("rightTree");
+            //获取选中的节点
+            var nodeArr=ztreepid.getSelectedNodes();
+            if(nodeArr.length  == 0){
+                // 判断新增必选节点
+                bootbox.alert("请选中父级节点");
+                return false;
+            }
+            var deleteNodes = ztreepid.transformToArray(nodeArr[0]);
+            var ids ="";
+            for (var i = 0; i < deleteNodes.length; i++) {
+                ids+=deleteNodes[i].id+ ",";
+            }
+
+            $.ajax({
+                type:"post",
+                dataType:"html",
+                async:false,
+                data:{"ids":ids.substring(0,ids.length-1)
+                },
+                url:"http://localhost:8044/areas/deleteArea",
+                success:function (result) {
+                    parent.location.reload();
+                }
+            })
+
+        }
+        //回现
+        function update() {
+            //获取被选中的PID
+            var ztreepid = $.fn.zTree.getZTreeObj("rightTree");
+            //获取选中的节点
+            var nodeArr=ztreepid.getSelectedNodes();
+            if(nodeArr.length  == 0){
+                // 判断新增必选节点
+                bootbox.alert("请选中父级节点");
+                return false;
+            }
+
+            $("#addA").html("<input type='text' class='form-control' value='"+nodeArr[0].name+"' id='updateName'><input type='button' class='btn btn-default' value='修改' onclick='updateRightTree()'>")
+        }
+
+        //修改
+        function updateRightTree() {
+            //获取被选中的PID
+            var ztreepid = $.fn.zTree.getZTreeObj("rightTree");
+            //获取选中的节点
+            var nodeArr=ztreepid.getSelectedNodes();
+            if(nodeArr.length  == 0){
+                // 判断新增必选节点
+                bootbox.alert("请选中父级节点");
+                return false;
+            }
+            var updateName = $("#updateName").val();
+            $.ajax({
+                type:"post",
+                dataType:"html",
+                async:false,
+                data:{"pid":nodeArr[0].id,
+                    "aName":updateName
+                },
+                url:"http://localhost:8044/areas/updateArea",
+                success:function (result) {
+                    parent.location.reload();
+                }
+            })
+        }
+
+</script>
+</body>
+</html>
