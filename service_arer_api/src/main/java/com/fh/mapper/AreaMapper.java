@@ -19,6 +19,7 @@ public interface AreaMapper {
     /**
      * 查询地区
      * @return
+     * @param
      */
     List<AreaBean> queryArea();
 
@@ -39,4 +40,7 @@ public interface AreaMapper {
      * @param areaBean
      */
     void updateArea(AreaBean areaBean);
+
+
+    List<AreaBean> queryAreaList(List array);
 }

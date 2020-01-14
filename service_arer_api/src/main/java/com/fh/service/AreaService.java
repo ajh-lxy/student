@@ -3,6 +3,7 @@ package com.fh.service;
 import com.fh.bean.AreaBean;
 import com.fh.util.response.ResponseServer;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -40,4 +41,11 @@ public interface AreaService {
      * @return
      */
     ResponseServer updateArea(AreaBean areaBean);
+
+    /**
+     * 导出地区
+     * @param ids
+     * @param response
+     */
+    void derive(String ids, HttpServletResponse response);
 }

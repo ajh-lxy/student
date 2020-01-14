@@ -37,8 +37,11 @@ public class PoiUtils {
             Class aClass = o.getClass();//得到类对象
             //获取标题名，标题名是加在了注解上
             ExportTitle annotation = (ExportTitle) aClass.getAnnotation(ExportTitle.class);
-            //标题名
-            String title = annotation.title();
+            String title="";
+            if(annotation!=null){
+                //标题名
+                title = annotation.title();
+            }
             //创建workbook
             XSSFWorkbook workbook = new XSSFWorkbook();
             //创建sheet页

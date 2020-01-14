@@ -1,5 +1,8 @@
 package com.fh.bean;
 
+import com.fh.annotation.ExportExcel;
+import com.fh.annotation.ExportTitle;
+
 /**
  * @author Lenovo
  * @title: AreaBean
@@ -7,10 +10,13 @@ package com.fh.bean;
  * @description: TODO
  * @date 2020/1/1415:56
  */
-
+@ExportTitle(title = "地区信息")
 public class AreaBean {
+    @ExportExcel(name = "aid")
     private Integer aid;//主键id
+    @ExportExcel(name = "pid")
     private Integer pid;//父id
+    @ExportExcel(name = "地区名字")
     private String aName;//地区名字
 
 

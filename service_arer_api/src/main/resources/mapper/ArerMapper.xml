@@ -18,4 +18,14 @@
     <update id="updateArea" parameterType="com.fh.bean.AreaBean">
         update s_area set aName=#{aName} where aid=#{pid}
     </update>
+    <!--查询地区-->
+    <select id="queryAreaList" resultType="com.fh.bean.AreaBean">
+        SELECT aid,pid,aName FROM s_area where 1=1
+            and aid in
+            <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+
+    </select>
+
 </mapper>

@@ -1,12 +1,16 @@
 package com.fh.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fh.bean.AreaBean;
 import com.fh.mapper.AreaMapper;
 import com.fh.service.AreaService;
+import com.fh.util.poi.PoiUtils;
 import com.fh.util.response.ResponseServer;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +25,7 @@ import java.util.Map;
  */
 @Service
 public class AreaServiceImpl implements AreaService {
+    private static Logger log = Logger.getLogger(AreaServiceImpl.class);
     @Autowired
     private AreaMapper areaMapper;
 
@@ -65,6 +70,36 @@ public class AreaServiceImpl implements AreaService {
     public ResponseServer updateArea(AreaBean areaBean) {
         areaMapper.updateArea(areaBean);
         return ResponseServer.success();
+    }
+
+    /**
+     * 导出地区
+     * @param ids
+     * @param response
+     */
+    @Override
+    public void derive(String ids, HttpServletResponse response) {
+        if (ids!=null && !ids.equals("")){
+            //定义idlist
+            List<Integer> list = new ArrayList<Integer>();
+            String[] split = ids.split(",");
+            for (int i = 0; i < split.length; i++) {
+                if(!split[i].equals("")){
+                    String s = split[i];
+                    list.add(Integer.valueOf(s.trim()));
+                }
+            }
+            //有条件
+            List<AreaBean> rightList = areaMapper.queryAreaList(list);
+            log.info(JSONObject.toJSONString(rightList));
+            PoiUtils.excelUtil(rightList, response);
+        }else {
+            //无条件
+            List<AreaBean> rightList = areaMapper.queryArea();
+            log.info(JSONObject.toJSONString(rightList));
+            PoiUtils.excelUtil(rightList, response);
+        }
+
     }
 
     //递归找节点

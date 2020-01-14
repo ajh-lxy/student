@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -66,5 +67,13 @@ public class AreaController {
         ResponseServer responseServer = areaService.updateArea(areaBean);
         log.info("修改地区信息："+areaBean.getaName());
         return responseServer;
+    }
+
+    /**
+     * 导出地区
+     */
+    @RequestMapping("derive")
+    public void derive(String ids, HttpServletResponse response){
+        areaService.derive(ids,response);
     }
 }
