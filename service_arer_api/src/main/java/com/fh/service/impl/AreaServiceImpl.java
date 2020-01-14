@@ -1,9 +1,16 @@
 package com.fh.service.impl;
 
+import com.fh.bean.AreaBean;
 import com.fh.mapper.AreaMapper;
 import com.fh.service.AreaService;
+import com.fh.util.response.ResponseServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Lenovo
@@ -16,4 +23,72 @@ import org.springframework.stereotype.Service;
 public class AreaServiceImpl implements AreaService {
     @Autowired
     private AreaMapper areaMapper;
+
+    /**
+     * 查询地区
+     * @return
+     */
+    @Override
+    public List<Map<String, Object>> queryArea() {
+        List<AreaBean> rightList = areaMapper.queryArea();
+        return getQueryList(0,rightList);
+    }
+
+    /**
+     * 添加地区
+     * @param areaBean
+     * @return
+     */
+    @Override
+    public ResponseServer addArea(AreaBean areaBean) {
+        areaMapper.addArea(areaBean);
+        return ResponseServer.success();
+    }
+
+    /**
+     * 删除地区
+     * @param ids
+     * @return
+     */
+    @Override
+    public ResponseServer deleteArea(String ids) {
+        areaMapper.deleteArea(ids);
+        return ResponseServer.success();
+    }
+
+    /**
+     * 修改地区
+     * @param areaBean
+     * @return
+     */
+    @Override
+    public ResponseServer updateArea(AreaBean areaBean) {
+        areaMapper.updateArea(areaBean);
+        return ResponseServer.success();
+    }
+
+    //递归找节点
+    private List<Map<String,Object>> getQueryList(Integer pid,List<AreaBean> rightList){
+        List<Map<String,Object>>  list=new ArrayList<Map<String, Object>>();
+        rightList.forEach(areaBean -> {
+            Map<String,Object> map=null;
+            if(pid.equals(areaBean.getPid())){
+                map =new HashMap<String, Object>();
+                map.put("id",areaBean.getAid());
+                map.put("name", areaBean.getaName());
+                if(0 ==  areaBean.getPid()){
+                    map.put("iconOpen","/commons/orgimg/1_open.png");
+                    map.put("iconClose","/commons/orgimg/organ.png");
+                }else {
+                    map.put("icon","/commons/orgimg/dept2.png");
+                }
+                map.put("children", getQueryList(areaBean.getAid(), rightList));
+            }
+            if(map != null){
+                list.add(map);
+            }
+
+        });
+        return list;
+    }
 }
