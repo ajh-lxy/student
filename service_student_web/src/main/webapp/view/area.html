@@ -32,6 +32,7 @@
     <button type="button" class="btn btn-default" onclick="addA()">添加信息</button>
     <button type="button" class="btn btn-default" onclick="delRightTree()">删除信息</button>
     <button type="button" class="btn btn-default" onclick="update()">修改信息</button>
+    <button type="button" class="btn btn-default" onclick="derive()">导出信息</button>
     <!--<%&#45;&#45;展示的树状菜单&#45;&#45;%>-->
     <div class="panel-body">
         <div class="ztree" id="rightTree">
@@ -109,6 +110,27 @@
             })
         }
 
+        /**
+         * 导出
+         */
+        function derive() {
+            //获取被选中的PID
+            var ztreepid = $.fn.zTree.getZTreeObj("rightTree");
+            //获取选中的节点
+            var nodeArr=ztreepid.getSelectedNodes();
+            if(nodeArr.length  == 0){
+                // 就代表没有选导出全部
+                location.href="http://localhost:8044/areas/derive"
+            }else {
+                var deleteNodes = ztreepid.transformToArray(nodeArr[0]);
+                var ids ="";
+                for (var i = 0; i < deleteNodes.length; i++) {
+                    ids+=deleteNodes[i].id+ ",";
+                }
+                //导出条件的
+                location.href="http://localhost:8044/areas/derive?ids="+ids;
+            }
+        }
         //删除
         function delRightTree() {
             //获取被选中的PID
