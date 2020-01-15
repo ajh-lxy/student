@@ -34,7 +34,8 @@ public class AreaController {
      */
     @RequestMapping(value = "queryArea")
     public List<Map<String,Object>> queryArea() {
-        return areaService.queryArea();
+        List<Map<String, Object>> maps = areaService.queryArea();
+        return maps;
     }
     /**
      * 添加地区
