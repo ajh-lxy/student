@@ -152,4 +152,33 @@ public class PoiUtils {
         }
 
     }
+
+
+    public static String getSql(Object obj){
+        String str="";
+        String table="";
+        //获取对象
+        Class<?> aClass = obj.getClass();
+
+        ExportTitle annotation = aClass.getAnnotation(ExportTitle.class);
+        if(annotation!=null){
+            //表名
+             table = annotation.title();
+        }
+
+        Field[] declaredFields = aClass.getDeclaredFields();
+        for (int i = 0; i < declaredFields.length; i++) {
+            //获取每一个属性
+            Field declaredField = declaredFields[i];
+            ExportExcel annotation1 = declaredField.getAnnotation(ExportExcel.class);
+            if(annotation1!=null){
+                //注解上的值
+                String name = annotation1.name();
+                str+=name+",";//拼接字段
+            }
+        }
+        String substring = str.substring(0, str.length() - 1);
+        String sql="select "+substring+" from "+table;
+        return sql;
+    }
 }
